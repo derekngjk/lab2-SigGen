@@ -5,7 +5,7 @@
 #include "vbuddy.cpp"     // include vbuddy code
 #define MAX_SIM_CYC 1000000
 #define ADDRESS_WIDTH 9
-#define RAM_SZ pow(2,ADDRESS_WIDTH)
+#define RAM_SZ pow(2,ADDRESS_WIDTH)  // 512
 
 int main(int argc, char **argv, char **env) {
   int simcyc;     // simulation clock count
@@ -33,6 +33,12 @@ int main(int argc, char **argv, char **env) {
   top->offset = 64;
   
   // intialize variables for analogue output
+  /*
+  This line informs vbuddy the size of the audio buffer to reserve to store the captured sample
+  RAM_SZ is simply 512, since the ram we are using has size 512.
+  So we just maintain a buffer of 512x8 audio signal, so that everytime we call vbdMicValue(),
+  we get back the next 8-bit value in that buffer.
+  */
   vbdInitMicIn(RAM_SZ);
 
   // run simulation for MAX_SIM_CYC clock cycles
@@ -43,6 +49,15 @@ int main(int argc, char **argv, char **env) {
       top->clk = !top->clk;
       top->eval ();
     }
+
+    /*
+    So basically here, on every cycle, we first update top -> mic_signal (the data input) as vbdMicValue(),
+    and we also update top -> offset to be the current value of the rotary encoder vbdValue(),
+    so that on the next cycle, when we call evaluate, we will pass in the updated din and offset to the module,
+    so that the ram will write the audio signal into the internal address computed by counter.
+    Then at the same time, we take the dout of this current cycle (the delayed signal) and just plot it
+    */
+
     top->mic_signal = vbdMicValue();
     top->offset = abs(vbdValue());     // adjust delay by changing incr
 
