@@ -37,3 +37,7 @@ However, we have to limit how high up incr can get. Because suppose for example 
 We implement this in the following testbench. Note that we have defined const int max_vbd_val = 255, min_vbd_val = 0, min_incr = 1 and max_incr = 20. We then perform the scaling as follows:
 
 ![testbench to change incr](images/[task1]freq_change_tb.png)
+
+This gives the following output when plotted on vbuddy. We can see the frequency changing when rotating the rotary encoder.
+
+![frequency change output](images/[task1]frequency_change_vbd.jpg)
