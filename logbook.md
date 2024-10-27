@@ -41,3 +41,21 @@ We implement this in the following testbench. Note that we have defined const in
 This gives the following output when plotted on vbuddy. We can see the frequency changing when rotating the rotary encoder.
 
 ![frequency change output](images/[task1]frequency_change_vbd.jpg)
+
+# Task 2
+
+Now we want to generate two sine waves simultaneously which have different phases. We want to be able to change the phase offset in real time by turning the rotary encoder. We do this by replacing the ROM in task 1 with a 2-read port ROM. The first port address is taken from the counter, as usual. However, the second port address, is the first port address + some offset.
+
+We update the top level .sv specification by adding another output dout2, and adding another input offset. So that the module takes in offset as an external signal, and internally, when it updates the count (which is used as addr1), it adds the offset to the count and uses it as addr2.
+
+![top level .sv](images/[task2]sinegen_sv.png)
+
+Then, we interface this module with the vbuddy simply by updating the value of top -> offset to the current vbdValue() every cycle, so that every cycle the top level module can compute the new address internally with the new offset.
+
+![sinegen tb](images/[task2]sinegen_tb.png)
+
+This gives us the following output on vbuddy. When the offset is 0, both waves are in phase. As we rotate the rotary encoder and edit the offset value, the phase difference of the two waves changes.
+
+![sinegen output 1](images/[task2]vbd_output_1.jpg)
+![sinegen output 2](images/[task2]vbd_output_2.jpg)
+![sinegen output 3](images/[task2]vbd_output_3.jpg)
